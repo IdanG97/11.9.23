@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Currency Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #container {
+            margin: 20px auto;
+            width: 400px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #result {
+            text-align: left;
+        }
+
+        img {
+            width: 30px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Currency Converter</h1>
+        <label for="currency">Select a currency:</label>
+        <select id="currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="ILS">ILS</option>
+            
+        </select>
+        <button onclick="getCurrencyInfo()">Get Info</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function getCurrencyInfo() {
+            const selectedCurrency = document.getElementById("currency").value;
+            const url = `https://restcountries.com/v3.1/currency/${selectedCurrency}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultContainer = document.getElementById("result");
+                    resultContainer.innerHTML = "";
+
+                    data.forEach(country => {
+                        const countryName = country.name.common;
+                        const currencyName = country.currencies[selectedCurrency].name;
+                        const language = country.languages[0];
+                        const flag = country.flags.svg;
+
+                        const countryInfo = document.createElement("div");
+                        countryInfo.innerHTML = `
+                            <h3>${countryName}</h3>
+                            <p><strong>Currency:</strong> ${currencyName}</p>
+                            <p><strong>Language:</strong> ${language}</p>
+                            <img src="${flag}" alt="${countryName} Flag">
+                            <hr>
+                        `;
+
+                        resultContainer.appendChild(countryInfo);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching data: ", error);
+                });
+        }
+    </script>
+</body>
+</html>
